@@ -1,44 +1,11 @@
----
-title: "teal_test_app"
-author: "Chaoyang Ye"
-date: "2025-04-21"
-output: html_document
----
-
-```{r}
 library(teal)
 library(data.table)
-```
 
-# teal app directory structure
-<!-- teal_app/ -->
-<!-- ├── app.Rmd -->
-<!-- ├── data/ -->
-<!-- │   ├── comp1/ -->
-<!-- │   │   ├── deseq_res1.csv -->
-<!-- │   │   ├── meta1.csv -->
-<!-- │   │   └── tpm1.csv -->
-<!-- │   └── comp2/ -->
-<!-- │       ├── deseq_res2.csv -->
-<!-- │       ├── meta2.csv -->
-<!-- │       └── tpm2.csv -->
-<!-- ├── modules/ -->
-<!-- │   ├── mod_volcano.R -->
-<!-- │   ├── mod_pca.R -->
-<!-- │   └── mod_barplot.R -->
-<!-- └── utils/ -->
-<!-- │   ├── data_prep.R --> # for preprocessing airway data
-<!--     └── load_data.R -->
-
-```{r load modules}
-setwd("~/Documents/Computation/ShinyConf2025/RNAseq_teal/RNAseq_teal_plotly")
 source("utils/load_data.R")
 source("modules/mod_volcano.R")
 source("modules/mod_pca.R")
 source("modules/mod_barplot.R")
-```
 
-```{r module registration}
 app_data <- teal_data(
   comp1_deseq = fread("data/comp1/deseq_res1.csv"),
   comp1_tpm   = fread("data/comp1/tpm1.csv"),
@@ -46,7 +13,7 @@ app_data <- teal_data(
   comp2_deseq = fread("data/comp2/deseq_res2.csv"),
   comp2_tpm   = fread("data/comp2/tpm2.csv"),
   comp2_meta  = fread("data/comp2/meta2.csv")
-  )
+)
 
 pca_mod <- module(
   label = "PCA",
@@ -56,10 +23,10 @@ pca_mod <- module(
   },
   server = function(id, data) {
     moduleServer(id, function(input, output, session) {
-    pca_module_server("pca", data())
-      }
+      pca_module_server("pca", data())
+    }
     )
-    },
+  },
   datanames = NULL # ← disables filter panel
 )
 
@@ -71,10 +38,10 @@ volcano_mod <- module(
   },
   server = function(id, data) {
     moduleServer(id, function(input, output, session) {
-    volcano_module_server("volcano", data())
-      }
+      volcano_module_server("volcano", data())
+    }
     )
-    },
+  },
   datanames = NULL
 )
 
@@ -86,17 +53,12 @@ barplot_mod <- module(
   },
   server = function(id, data) {
     moduleServer(id, function(input, output, session) {
-    barplot_module_server("barplot", data())
-      }
+      barplot_module_server("barplot", data())
+    }
     )
-    },
+  },
   datanames = NULL
 )
-
-```
-
-
-```{r app defination}
 
 app <- init(
   data = app_data,
@@ -105,12 +67,6 @@ app <- init(
     volcano_mod,
     barplot_mod
   )
-  )
-```
+)
 
-```{r}
-# Run the app
-if (interactive()) {
-  shiny::shinyApp(ui = app$ui, server = app$server)
-}
-```
+shinyApp(ui = app$ui, server = app$server)
